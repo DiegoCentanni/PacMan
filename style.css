@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Courier New', monospace;
+  color: #FFD700;
+}
+
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: 8px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px #FFD700;
+}
+
+#info {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+canvas {
+  border: 3px solid #1a82f7;
+  box-shadow: 0 0 30px #1a82f7;
+  display: block;
+}
+
+#messaggio {
+  margin-top: 16px;
+  font-size: 1.3rem;
+  letter-spacing: 3px;
+  min-height: 28px;
+  color: #fff;
+  text-shadow: 0 0 10px #FFD700;
+}
+
+#istruzioni {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #aaa;
+  letter-spacing: 1px;
+}

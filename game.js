@@ -3,9 +3,9 @@ let finePartita = false; // diventa true quando si vince o si perde
 
 // funzione che disegna tutto insieme ad ogni frame
 function disegna() {
-  disegnaLabirinto(); // da labirinto.js
-  disegnaPacman();    // da pacman.js
-  disegnaFantasma();  // da fantasma.js
+  labirinto.disegna(); // da labirinto.js
+  pacman.disegna();    // da pacman.js
+  fantasma.disegna();  // da fantasma.js
 }
 
 function loop() {
@@ -14,20 +14,21 @@ function loop() {
 
   // aggiorna pacman ogni 8 frame (circa 7 volte al secondo)
   if (frame % 8 === 0) {
-    muoviPacman();
+    pacman.muovi();
     pacman.boccaAperta = !pacman.boccaAperta; // alterna bocca aperta/chiusa
+    fantasma.controllaCollisione(); // controlla collisione dopo movimento pacman
   }
 
   // aggiorna il fantasma ogni 16 frame (più lento di pacman)
   if (frame % 16 === 0) {
-    muoviFantasma();
-    controllaCollisione(); // controlla se il fantasma ha preso pacman
+    fantasma.muovi();
+    fantasma.controllaCollisione(); // controlla collisione dopo movimento fantasma
   }
 
   disegna();
 
   // controlla se ha vinto
-  if (palliniMangiati >= totallePallini) {
+  if (palliniMangiati >= labirinto.totalePallini) {
     finePartita = true;
     disegna();
     document.getElementById('messaggio').textContent = 'HAI VINTO, il tuo punteggio è: ' + punteggio;

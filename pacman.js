@@ -80,7 +80,7 @@ let pacman = {
     labirinto.ctx.closePath();
     labirinto.ctx.fill();
   }
-};
+};// fine dell'oggetto pacman
 
 // ascolta i tasti freccia e salva la direzione voluta in prossimaDirezione
 document.addEventListener('keydown', function(evento) {

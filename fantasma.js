@@ -1,7 +1,7 @@
 let fantasma = {
-  riga:      1,
-  colonna:   1,
-  direzione: { dr: 0, dc: 1 },
+  riga:      10,
+  colonna:   9,
+  direzione: { dr: -1, dc: 0 },
 
   tutteLeDirezioni: [
     { dr: -1, dc:  0 },
@@ -12,43 +12,34 @@ let fantasma = {
 
   muovi: function() {
     const opposta = { dr: -this.direzione.dr, dc: -this.direzione.dc };
+    const direzioniLibere = this.tutteLeDirezioni.filter(function(d) {
+      return !labirinto.èMuro(this.riga + d.dr, this.colonna + d.dc);
+    }.bind(this));
 
-    const prossimaRiga    = this.riga    + this.direzione.dr;
-    const prossimaColonna = this.colonna + this.direzione.dc;
+    const direzioniNonOpposte = direzioniLibere.filter(function(d) {
+      return !(d.dr === opposta.dr && d.dc === opposta.dc);
+    });
 
-    if (!labirinto.èMuro(prossimaRiga, prossimaColonna)) {
-      this.riga    = prossimaRiga;
-      this.colonna = prossimaColonna;
-    } else {
-      // cerca direzioni libere escludendo quella opposta TOGLIENDO DAL VETTORE LE DIREZIONI IMPOSSIBILI
-      const direzioniLibere = this.tutteLeDirezioni.filter(function(d) {
-        return !labirinto.èMuro(this.riga + d.dr, this.colonna + d.dc) &&
-               !(d.dr === opposta.dr && d.dc === opposta.dc);
-      }.bind(this));
+    let scelte = direzioniNonOpposte.length > 0 ? direzioniNonOpposte : direzioniLibere;
 
-      // se è un vicolo cieco accetta anche quella opposta
-      let scelte = direzioniLibere;
-      if (direzioniLibere.length === 0) {
-        scelte = this.tutteLeDirezioni.filter(function(d) {
-          return !labirinto.èMuro(this.riga + d.dr, this.colonna + d.dc);
-        }.bind(this));
-      }
+    if (scelte.length > 1) {
+      // gira in un incrocio anche se la strada davanti è libera
+      this.direzione = scelte[Math.floor(Math.random() * scelte.length)];
+    } else if (scelte.length === 1) {
+      this.direzione = scelte[0];
+    }
 
-      if (scelte.length > 0) {
-        // sceglie a caso tra quelle disponibili
-        this.direzione = scelte[Math.floor(Math.random() * scelte.length)];
-        this.riga    += this.direzione.dr;
-        this.colonna += this.direzione.dc;
-      }
+    if (this.direzione) {
+      this.riga += this.direzione.dr;
+      this.colonna += this.direzione.dc;
+      this.passaNelTunnel();
     }
   },
 
-  controllaCollisione: function() {
-    if (this.riga === pacman.riga && this.colonna === pacman.colonna) {
-      finePartita = true;
-      labirinto.disegna();
-      document.getElementById('messaggio').textContent = 'HAI PERSO! Punteggio: ' + punteggio;
-    }
+  passaNelTunnel: function() {
+    if (this.riga !== 10) return;
+    if (this.colonna < 0) this.colonna = labirinto.COLONNE - 1;
+    if (this.colonna >= labirinto.COLONNE) this.colonna = 0;
   },
 
   // disegna il fantasma rosso con la forma a denti in basso

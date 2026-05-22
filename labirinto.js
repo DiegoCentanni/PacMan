@@ -26,24 +26,8 @@ let labirinto = {
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   ],
 
-  // numero di righe e colonne della mappa
-  RIGHE: 0,
-  COLONNE: 0,
-
   // quanti pixel occupa ogni cella sullo schermo
   CELLA: 28,
-
-  // prende il canvas dall'html e imposta larghezza e altezza in base alla mappa
-  canvas: null,
-
-  // ctx è il "pennello" con cui disegniamo dentro il canvas
-  ctx: null,
-
-  // copia modificabile della mappa (quella originale non viene mai toccata)
-  griglia: null,
-
-  // quanti pallini ci sono in totale all'inizio della partita
-  totalePallini: 0,
 
   init: function() {
     this.RIGHE = this.mappa.length;
@@ -53,7 +37,22 @@ let labirinto = {
     this.canvas.height = this.RIGHE   * this.CELLA;
     this.ctx = this.canvas.getContext('2d');
     this.griglia = this.mappa.map(riga => [...riga]);
-    this.totalePallini = 0;
+    const palliniDiPartenza = [];
+    const buchiDelTunnel = [ [10, 0], [10, 18] ];
+
+    [[1, 1], [16, 9]].forEach(([r, c]) => {
+      if (this.griglia[r][c] === 0 || this.griglia[r][c] === 3) {
+        palliniDiPartenza.push(this.griglia[r][c]);
+        this.griglia[r][c] = 2;
+      }
+    });
+
+    palliniDiPartenza.forEach((tipo, index) => {
+      const [r, c] = buchiDelTunnel[index];
+      if (this.griglia[r][c] === 2) this.griglia[r][c] = tipo;
+    });
+
+    this.totalePallini = 0; // 180 pallini piccoli + 4 grandi = 2000 punti totali
     for (let r = 0; r < this.RIGHE; r++)
       for (let c = 0; c < this.COLONNE; c++)
         if (this.griglia[r][c] === 0 || this.griglia[r][c] === 3) this.totalePallini++;

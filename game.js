@@ -1,11 +1,42 @@
 let frame       = 0;     // conta i frame passati dall'inizio
 let finePartita = false; // diventa true quando si vince o si perde
 
+function resetGame() {
+  labirinto.init();
+  punteggio = 0;
+  palliniMangiati = 0;
+  finePartita = false;
+  frame = 0;
+  pacman.riga = 16;
+  pacman.colonna = 9;
+  pacman.direzione = { dr: 0, dc: 0 };
+  pacman.prossimaDirezione = { dr: 0, dc: 0 };
+  pacman.boccaAperta = true;
+  fantasma.riga = 10;
+  fantasma.colonna = 9;
+  fantasma.direzione = { dr: -1, dc: 0 };
+  document.getElementById('punteggio').textContent = punteggio;
+  document.getElementById('messaggio').textContent = '';
+  document.getElementById('reset').style.display = 'none';
+  requestAnimationFrame(loop);
+}
+document.getElementById('reset').addEventListener('click', resetGame);
+
+document.getElementById('punteggio').textContent = punteggio;
+document.getElementById('messaggio').textContent = '';
+
 // funzione che disegna tutto insieme ad ogni frame
 function disegna() {
   labirinto.disegna(); // da labirinto.js
-  pacman.disegna();    // da pacman.js
   fantasma.disegna();  // da fantasma.js
+  pacman.disegna();    // da pacman.js
+}
+
+function gameOver() {
+  finePartita = true;
+  disegna();
+  document.getElementById('messaggio').textContent = 'HAI PERSO! Punteggio: ' + punteggio;
+  document.getElementById('reset').style.display = 'inline-block';
 }
 
 function loop() {
@@ -16,13 +47,27 @@ function loop() {
   if (frame % 8 === 0) {
     pacman.muovi();
     pacman.boccaAperta = !pacman.boccaAperta; // alterna bocca aperta/chiusa
-    fantasma.controllaCollisione(); // controlla collisione dopo movimento pacman
+    if (fantasma.riga === pacman.riga && fantasma.colonna === pacman.colonna) {
+      gameOver();
+      return;
+    }
   }
 
   // aggiorna il fantasma ogni 16 frame (più lento di pacman)
   if (frame % 16 === 0) {
+    const pacmanPrima = { riga: pacman.riga, colonna: pacman.colonna };
+    const fantasmaPrima = { riga: fantasma.riga, colonna: fantasma.colonna };
+
     fantasma.muovi();
-    fantasma.controllaCollisione(); // controlla collisione dopo movimento fantasma
+    if (fantasma.riga === pacman.riga && fantasma.colonna === pacman.colonna) {
+      gameOver();
+      return;
+    }
+    if (fantasma.riga === pacmanPrima.riga && fantasma.colonna === pacmanPrima.colonna &&
+        fantasmaPrima.riga === pacman.riga && fantasmaPrima.colonna === pacman.colonna) {
+      gameOver();
+      return;
+    }
   }
 
   disegna();
@@ -32,6 +77,7 @@ function loop() {
     finePartita = true;
     disegna();
     document.getElementById('messaggio').textContent = 'HAI VINTO, il tuo punteggio è: ' + punteggio;
+    document.getElementById('reset').style.display = 'inline-block';
     return;
   }
 

@@ -28,13 +28,15 @@ let labirinto = {
   // quanti pixel occupa ogni cella sullo schermo
   CELLA: 28,
 
-  //inizializza tutto prima che il gioco parta + conta C e R
+  //inizializza tutto prima che il gioco parta
   init: function() {
+    // conta C e R
     this.RIGHE = this.mappa.length;
     this.COLONNE = this.mappa[0].length;
+    //imposta la canvas moltiplicando le C per R per il num di pixel
     this.canvas = document.getElementById('canvas');
     this.canvas.width  = this.COLONNE * this.CELLA;
-    this.canvas.height = this.RIGHE   * this.CELLA;
+    this.canvas.height = this.RIGHE * this.CELLA;
     this.ctx = this.canvas.getContext('2d');
 
     //copia della mappa per ricomincia
@@ -42,7 +44,7 @@ let labirinto = {
     const palliniDiPartenza = [];
     const buchiDelTunnel = [ [10, 0], [10, 18] ];
 
-    //spostamento pallini da celle spawn
+    //spostamento pallini da celle spawn a tunnel
     [[1, 1], [16, 9]].forEach(([r, c]) => {
       if (this.griglia[r][c] === 0 || this.griglia[r][c] === 3) {
         palliniDiPartenza.push(this.griglia[r][c]);
@@ -64,7 +66,7 @@ let labirinto = {
   // restituisce true se la cella è un muro o fuori dalla mappa
   // eccezione: nella riga 10 (tunnel) si può uscire dai bordi per il teletrasporto
   èMuro: function(r, c) {
-    if (r === 10 && (c < 0 || c >= this.COLONNE)) return false; // tunnel: non è muro
+    if (r === 10 && (c < 0 || c >= this.COLONNE)) return false;
     if (r < 0 || r >= this.RIGHE || c < 0 || c >= this.COLONNE) return true;
     return this.griglia[r][c] === 1;
   },

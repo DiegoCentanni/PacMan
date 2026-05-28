@@ -27,7 +27,7 @@ let pacman = {
       this.colonna = nuovaColonna;
     }
 
-    // tunnel
+    // // se sono nella riga 10 esce da un lato e rientra dall'altro
     if (this.riga === 10) {
       if (this.colonna < 0) this.colonna = labirinto.COLONNE - 1;
       if (this.colonna >= labirinto.COLONNE) this.colonna = 0;
@@ -49,7 +49,7 @@ let pacman = {
     document.getElementById('punteggio').textContent = punteggio;
   },
 
-  // disegna pacman sul canvas nella posizione attuale
+  // disegna pacman sul canvas nella posizione attuale al centro della cella
   disegna: function() {
     const x = this.colonna * labirinto.CELLA + labirinto.CELLA / 2;
     const y = this.riga * labirinto.CELLA + labirinto.CELLA / 2;
@@ -79,7 +79,7 @@ let pacman = {
   }
 };
 
-// vede il tasto premuto e vede se prossimaDirezione è libera per il movimento
+// vede il tasto premuto
 document.addEventListener('keydown', function(evento) {
   const tasti = {
     'ArrowUp': { dr: -1, dc:  0 }, // su

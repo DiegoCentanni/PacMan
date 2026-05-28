@@ -1,6 +1,7 @@
-let frame       = 0;     // conta i frame passati dall'inizio
+let frame= 0; // conta i frame passati dall'inizio
 let finePartita = false; // diventa true quando si vince o si perde
 
+//rimette tutto come all'inizio per una nuova partite
 function resetGame() {
   labirinto.init();
   punteggio = 0;
@@ -20,18 +21,18 @@ function resetGame() {
   document.getElementById('reset').style.display = 'none';
   requestAnimationFrame(loop);
 }
-document.getElementById('reset').addEventListener('click', resetGame);
-
+document.getElementById('reset').addEventListener('click', resetGame); // richiama resetGame
+// svuota punteggio e il messaggio
 document.getElementById('punteggio').textContent = punteggio;
 document.getElementById('messaggio').textContent = '';
 
-// funzione che disegna tutto insieme ad ogni frame
 function disegna() {
   labirinto.disegna(); // da labirinto.js
-  fantasma.disegna();  // da fantasma.js
-  pacman.disegna();    // da pacman.js
+  fantasma.disegna(); // da fantasma.js
+  pacman.disegna(); // da pacman.js
 }
 
+// imposta il fine partita e disegna la posizione "finale" di pacman e fantasma e stampa i messaggi
 function gameOver() {
   finePartita = true;
   disegna();
@@ -43,7 +44,7 @@ function loop() {
   if (finePartita) return; // se la partita è finita si ferma tutto
   frame++;
 
-  // aggiorna pacman ogni 8 frame (circa 7 volte al secondo)
+  // aggiorna pacman ogni 8 frame e controlla se hai perso
   if (frame % 8 === 0) {
     pacman.muovi();
     pacman.boccaAperta = !pacman.boccaAperta; // alterna bocca aperta/chiusa
@@ -53,11 +54,10 @@ function loop() {
     }
   }
 
-  // aggiorna il fantasma ogni 16 frame (più lento di pacman)
+  // aggiorna il fantasma ogni 16 frame e controlla se hai perso
   if (frame % 16 === 0) {
     const pacmanPrima = { riga: pacman.riga, colonna: pacman.colonna };
     const fantasmaPrima = { riga: fantasma.riga, colonna: fantasma.colonna };
-
     fantasma.muovi();
     if (fantasma.riga === pacman.riga && fantasma.colonna === pacman.colonna) {
       gameOver();
@@ -71,8 +71,7 @@ function loop() {
   }
 
   disegna();
-
-  // controlla se ha vinto
+  // controlla se ha vinto e fa uscire i vari messaggi con punteggio
   if (palliniMangiati >= labirinto.totalePallini) {
     finePartita = true;
     disegna();
@@ -80,7 +79,8 @@ function loop() {
     document.getElementById('reset').style.display = 'inline-block';
     return;
   }
-
   requestAnimationFrame(loop);
 }
+
+// avvia tutto quando la pagina viene caricata
 loop();
